@@ -1,6 +1,8 @@
 #!/bin/bash
 DOTFILES="$HOME/dotfiles"
 
+git submodule update --init --recursive
+
 # Backup existing configs
 backup_dir="$HOME/dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$backup_dir"

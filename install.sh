@@ -8,11 +8,11 @@ backup_dir="$HOME/dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$backup_dir"
 
 # Neovim
-{ [ -e "$HOME/.config/nvim" ] || [ -L "$HOME/.config/nvim" ]; } && mv -h "$HOME/.config/nvim" "$backup_dir/"
+{ [ -e "$HOME/.config/nvim" ] || [ -L "$HOME/.config/nvim" ]; } && mv "$HOME/.config/nvim" "$backup_dir/"
 ln -sf "$DOTFILES/nvim" "$HOME/.config/nvim"
 
 # Tmux
-{ [ -e "$HOME/.tmux.conf" ] || [ -L "$HOME/.tmux.conf" ]; } && mv -h "$HOME/.tmux.conf" "$backup_dir/"
+{ [ -e "$HOME/.tmux.conf" ] || [ -L "$HOME/.tmux.conf" ]; } && mv "$HOME/.tmux.conf" "$backup_dir/"
 ln -sf "$DOTFILES/tmux.conf" "$HOME/.tmux.conf"
 
 ## Bash

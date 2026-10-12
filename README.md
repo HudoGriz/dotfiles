@@ -1,28 +1,54 @@
-# Tmux Configuration Guide
+# Tmux and Neovim Configuration
 
 ## Installation
 
-1. **Install tmux**  
-   On Linux:  
+1. **Install Git and tmux** (and Neovim to use the editor config).
+   On Debian/Ubuntu:
    ```sh
-   sudo apt install tmux
+   sudo apt install git tmux
    ```
 
-2. **Clone this config**  
-   Symlink or copy `tmux.conf` to your home directory as `.tmux.conf`.
-
-3. **Install TPM (Tmux Plugin Manager)**  
+2. **Clone and install** (requires internet access):
    ```sh
-   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+   git clone https://github.com/HudoGriz/dotfiles.git ~/dotfiles
+   bash ~/dotfiles/install.sh
    ```
 
-4. **Start tmux**  
+   The installer initializes the Neovim submodule, backs up existing configs to
+   `~/dotfiles_backup_*`, links the tmux and Neovim configs, and installs TPM
+   (Tmux Plugin Manager) and all configured tmux plugins. The repo can also be
+   cloned elsewhere; run `install.sh` from that location. Rerunning it preserves
+   existing plugin installations and installs missing plugins.
+
+3. **Start tmux**:
    ```sh
    tmux
    ```
 
-5. **Install plugins**  
-   Press `Ctrl+a` then `I` (capital i) to install plugins via TPM.
+   If tmux is already running, press `Ctrl+a`, release, then `r` to reload the
+   config and activate the installed plugins.
+
+## Saving and restoring sessions
+
+All shortcuts below mean press `Ctrl+a`, release, then the second key.
+
+- **Save all sessions now:** `Ctrl+a` then `Ctrl+s`.
+- **Restore all saved sessions:** `Ctrl+a` then `Ctrl+r`.
+- **Automatic save:** every 15 minutes while tmux is running with a client attached.
+- **Automatic restore:** when the tmux server starts, the latest saved snapshot
+  is restored. A fresh installation needs a first save before it can restore anything.
+
+To restore manually from a shell while tmux is running:
+
+```sh
+tmux run-shell ~/.tmux/plugins/tmux-resurrect/scripts/restore.sh
+```
+
+List restored sessions with `tmux ls` and open one with `tmux attach -t SESSION_NAME`.
+Snapshots are stored in `~/.tmux/resurrect/`, outside this repository. Each user
+creates their own snapshots; copying this repo does not copy saved sessions.
+Restoration recreates layouts, working directories, and supported programs;
+it does not resume running jobs from their previous execution state.
 
 ## Features
 

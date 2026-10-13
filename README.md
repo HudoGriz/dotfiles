@@ -20,9 +20,12 @@
    cloned elsewhere; run `install.sh` from that location. Rerunning it preserves
    existing plugin installations and installs missing plugins.
 
-   If Neovim is installed and glibc is older than 2.39 (e.g. RHEL 9), the
-   installer also puts a compatible tree-sitter CLI from conda-forge in
-   `~/.local/bin`, since the binary Mason downloads cannot run there.
+   If Neovim is installed, the installer also fetches the command-line tools
+   it relies on that are missing: `rg`, `fd`, `fzf`, `lazygit` and Node.js
+   (for Copilot). On glibc older than 2.39 (e.g. RHEL 9) it adds a compatible
+   tree-sitter CLI, since the binary Mason downloads cannot run there. They
+   come from conda-forge, need no root, live in `~/.local/opt/nvim-tools` and
+   are linked into `~/.local/bin`, which must be on your `PATH`.
 
 3. **Start tmux**:
    ```sh
@@ -59,9 +62,13 @@ it does not resume running jobs from their previous execution state.
 - **Prefix key:** `Ctrl+a` (instead of default `Ctrl+b`)
 - **Pane navigation:** Use `Ctrl+h/j/k/l` to move between Vim and tmux panes (requires [vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator) in Vim/Neovim)
 - **Splitting:** `Ctrl+a |` (vertical), `Ctrl+a -` (horizontal)
-- **Copy mode:** `v` to select, `y` to copy to system clipboard
+- **Copy mode:** `v` to select, `y` to copy to the system clipboard. On a remote
+  machine without a clipboard tool, the copy reaches your local terminal through
+  OSC 52 (supported by most modern terminals).
 - **Mouse support:** Enabled
 - **Session restore:** Automatic with tmux-resurrect and tmux-continuum
+- **Theme:** Tokyo Night via tmux-tokyo-night, pinned to v6.3.3 because later
+  versions need Bash 5.2. `Ctrl+a T` opens the theme selector.
 
 ## Troubleshooting
 
@@ -69,5 +76,7 @@ it does not resume running jobs from their previous execution state.
 - To reinstall plugins, press `Ctrl+a` then `I` inside tmux.
 - For Vim pane navigation, ensure the Vim plugin is installed.
 - If Neovim shows `Error during "tree-sitter build"` with `GLIBC_2.39 not found`,
-  rerun `install.sh` and make sure `~/.local/bin` is on your `PATH`.
+  or Copilot reports `Node.js not found`, rerun `install.sh` and make sure
+  `~/.local/bin` is on your `PATH`.
+- Copilot needs a one-time sign-in per machine: run `:Copilot setup` in Neovim.
 

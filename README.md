@@ -20,6 +20,10 @@
    cloned elsewhere; run `install.sh` from that location. Rerunning it preserves
    existing plugin installations and installs missing plugins.
 
+   If Neovim is installed and glibc is older than 2.39 (e.g. RHEL 9), the
+   installer also puts a compatible tree-sitter CLI from conda-forge in
+   `~/.local/bin`, since the binary Mason downloads cannot run there.
+
 3. **Start tmux**:
    ```sh
    tmux
@@ -64,4 +68,6 @@ it does not resume running jobs from their previous execution state.
 - If plugins are not installed, check `~/.tmux/plugins/` for plugin folders.
 - To reinstall plugins, press `Ctrl+a` then `I` inside tmux.
 - For Vim pane navigation, ensure the Vim plugin is installed.
+- If Neovim shows `Error during "tree-sitter build"` with `GLIBC_2.39 not found`,
+  rerun `install.sh` and make sure `~/.local/bin` is on your `PATH`.
 

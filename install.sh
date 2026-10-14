@@ -35,7 +35,16 @@ sed -n "s/^set -g @plugin '\([^'#]*\)#\([^']*\)'.*/\1 \2/p" "$DOTFILES/tmux.conf
             rm -rf "$plugin_dir"
         fi
     done
-"$tpm_dir/bin/install_plugins"
+# TPM reads its path from the tmux server, so run it on a private server that loads the
+# new config: a server already running (or a $TMUX inherited via su) would make it abort.
+# /tmp keeps the socket path short enough for Unix sockets.
+tpm_tmp="$(mktemp -d /tmp/tpm.XXXXXX)"
+(
+    unset TMUX
+    export TMUX_TMPDIR="$tpm_tmp"
+    trap 'tmux kill-server 2>/dev/null || true; rm -rf "$TMUX_TMPDIR"' EXIT
+    "$tpm_dir/bin/install_plugins"
+)
 
 # Neovim relies on command-line tools: ripgrep and fd for search, fzf, lazygit,
 # Node.js for Copilot, and the tree-sitter CLI for parsers. Missing ones come from

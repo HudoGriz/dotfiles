@@ -34,7 +34,8 @@ else
     test "${FAIL_SUBMODULE:-0}" = 0
 fi
 EOF
-printf '#!/bin/bash\nexit 0\n' > "$test_dir/bin/tmux"
+# Like real tmux when no server is running, e.g. kill-server after TPM's server exited.
+printf '#!/bin/bash\nexit 1\n' > "$test_dir/bin/tmux"
 printf '#!/bin/bash\nexit 0\n' > "$test_dir/bin/nvim"
 printf '#!/bin/bash\nexit 0\n' > "$test_dir/bin/fzf"
 printf '#!/bin/bash\necho "glibc ${FAKE_GLIBC:-2.39}"\n' > "$test_dir/bin/getconf"

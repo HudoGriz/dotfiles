@@ -46,6 +46,17 @@ tpm_tmp="$(mktemp -d /tmp/tpm.XXXXXX)"
     "$tpm_dir/bin/install_plugins"
 )
 
+# TPM uses a private tmux server, so existing sessions still have the old config.
+# Reload the user's running server without stopping or restarting any sessions.
+if tmux has-session 2>/dev/null; then
+    if tmux source-file "$HOME/.tmux.conf"; then
+        echo "Reloaded tmux config in the running server."
+    else
+        echo "Warning: Could not reload the running tmux server." >&2
+        echo "Run: tmux source-file ~/.tmux.conf" >&2
+    fi
+fi
+
 # Neovim relies on command-line tools: ripgrep and fd for search, fzf, lazygit,
 # Node.js for Copilot, and the tree-sitter CLI for parsers. Missing ones come from
 # conda-forge, which needs no root and runs on glibc 2.17+.

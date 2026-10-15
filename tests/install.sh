@@ -35,7 +35,17 @@ else
 fi
 EOF
 # Like real tmux when no server is running, e.g. kill-server after TPM's server exited.
-printf '#!/bin/bash\nexit 1\n' > "$test_dir/bin/tmux"
+cat > "$test_dir/bin/tmux" <<'EOF'
+#!/bin/bash
+case "${1:-}" in
+    has-session) test "${FAKE_TMUX_RUNNING:-0}" = 1 ;;
+    source-file)
+        printf '%s\n' "${2:-}" >> "$HOME/tmux-sourced-files"
+        test "${FAKE_TMUX_SOURCE_FAIL:-0}" = 0
+        ;;
+    *) exit 1 ;;
+esac
+EOF
 printf '#!/bin/bash\nexit 0\n' > "$test_dir/bin/nvim"
 printf '#!/bin/bash\nexit 0\n' > "$test_dir/bin/fzf"
 printf '#!/bin/bash\necho "glibc ${FAKE_GLIBC:-2.39}"\n' > "$test_dir/bin/getconf"
@@ -114,6 +124,16 @@ test ! -e "$mason/packages/tree-sitter-cli"
 rm "$HOME/micromamba-calls"
 FAKE_GLIBC=2.34 bash "$test_dir/repo with spaces/install.sh"
 test ! -e "$HOME/micromamba-calls"
+
+# A running tmux server should receive the new configuration automatically.
+test ! -e "$HOME/tmux-sourced-files"
+FAKE_TMUX_RUNNING=1 bash "$test_dir/repo with spaces/install.sh"
+grep -Fxq "$HOME/.tmux.conf" "$HOME/tmux-sourced-files"
+
+# A reload failure warns the user but does not invalidate the installation.
+FAKE_TMUX_RUNNING=1 FAKE_TMUX_SOURCE_FAIL=1 \
+    bash "$test_dir/repo with spaces/install.sh" > "$test_dir/tmux-reload.log" 2>&1
+grep -Fq "Warning: Could not reload the running tmux server." "$test_dir/tmux-reload.log"
 
 if FAIL_SUBMODULE=1 bash "$test_dir/repo with spaces/install.sh"; then
     echo 'Expected submodule failure to stop installation' >&2

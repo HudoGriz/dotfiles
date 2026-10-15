@@ -32,8 +32,19 @@
    tmux
    ```
 
-   If tmux is already running, press `Ctrl+a`, release, then `r` to reload the
-   config and activate the installed plugins.
+   On a fresh server, tmux loads the config on startup. If tmux is already
+   running during installation, the installer automatically reloads its config
+   without disrupting existing sessions.
+
+   To reload the configuration manually at any time, run:
+
+   ```sh
+   tmux source-file ~/.tmux.conf
+   ```
+
+   Or, from inside tmux, press `Ctrl+a`, release, then `r`. If you use a named
+   tmux server (`tmux -L NAME`), reload it with
+   `tmux -L NAME source-file ~/.tmux.conf`.
 
 ## Saving and restoring sessions
 
@@ -72,6 +83,9 @@ it does not resume running jobs from their previous execution state.
 
 ## Troubleshooting
 
+- If installation succeeds but the old settings or theme remain, run
+  `tmux source-file ~/.tmux.conf` against the affected server; an existing
+  server retains its settings until reloaded.
 - If plugins are not installed, check `~/.tmux/plugins/` for plugin folders.
 - To reinstall plugins, press `Ctrl+a` then `I` inside tmux.
 - For Vim pane navigation, ensure the Vim plugin is installed.
